@@ -1,4 +1,4 @@
-# winspect: A Windows Device Security Posture Inspector Tool
+# winspect: A Windows Security Posture Inspector Tool
 Developing a simple tool to check a workplace device's security posture according to a set of security rules to determine whether it should be allowed to enter a company's intranet.
 Will be made using Powershell and references Windows Registry keys and information from publicly available APIs.
 
@@ -13,3 +13,5 @@ Tool will go through 3 different types of checks to determine whether it is secu
 
 **2**: Operating System
 - Checks if a device has the latest Windows patch.
+
+*This project was made for my GovTech Girls in Tech Mentorship Program!*
