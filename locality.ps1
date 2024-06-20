@@ -6,7 +6,7 @@ Function:
 - Checks for a device's network locality by extracting a JSON response from http://ip-api.com/json/. 
 - Iterates through the UN Sanctions list to determine whether traffic is to be blocked or not.
 
-Result: localityCheck [Success/Fail]
+Result: localityCheck [Pass/Fail]
 #>
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~GetLocation Function~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -23,7 +23,7 @@ function GetGeolocation {
         return [PSCustomObject]@{
             Status  = $response.status
             Country = $response.country
-        }
+            }
         }
     } catch {
         # Handling exceptions
@@ -70,4 +70,5 @@ if ($sanctionCheck -eq "Pass") {
     $localityCheck = "Pass"
 }
 
+return $localityCheck
 Write-Host "Result of Locality Check: $($localityCheck)" -ForegroundColor Magenta
