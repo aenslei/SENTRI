@@ -14,4 +14,4 @@ Tool will go through 3 different types of checks to determine whether it is secu
 **2**: Operating System
 - Checks if a device has the latest Windows patch.
 
-*This project was made for my GovTech Girls in Tech Mentorship Program!*
+*This project was made for my GovTech Singapore Girls in Tech Mentorship Program!*
