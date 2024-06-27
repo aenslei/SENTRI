@@ -72,6 +72,6 @@ if ($sanctionCheck -eq "Pass") {
     $localityCheck = "Pass"
 }
 
-Write-Host "Result of Locality Check: $($localityCheck)" -ForegroundColor DarkBlue
+Write-Host "locality.ps1: Result of Locality Check: $($localityCheck)" -ForegroundColor DarkBlue
 
 Write-Output $localityCheck

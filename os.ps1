@@ -52,14 +52,15 @@ $osCheck = "Fail"
 # Defines devices current version
 # $currentVersion = GetBuildData
 $currentVersion = "22631.3810"
-Write-Host "Device's Current Windows OS Build: $($currentVersion)" -ForegroundColor DarkCyan
+Write-Host "os.ps1: Device's Current Windows OS Build: $($currentVersion)" -ForegroundColor DarkCyan
 
 # Defines the value of the latest version from Microsoft's public release history
 $latestVersions = GetLatestVersions
-Write-Host "List of Latest Windows Builds: $($latestVersions)" -ForegroundColor DarkRed
+Write-Host "os.ps1: List of Latest Windows Builds: $($latestVersions)" -ForegroundColor DarkRed
 
 if ($currentVersion -in $latestVersions) {
     $osCheck = "Pass"
 }
 
+Write-Host "os.ps1: Result of OS Version Check: $($osCheck)" -ForegroundColor Magenta
 Write-Output $osCheck

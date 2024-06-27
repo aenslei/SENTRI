@@ -139,14 +139,14 @@ function ExpressVPNLatestVersion {
 $secprodCheck = "Fail"
 
 # Defining array of versions to check
-$registryPaths = @("HKLM:\SOFTWARE\ExpressVPN", "HKLM:\SOFTWARE\Norton\{REDACTED-REDACTED-REDACTED-REDACTED-REDACTED}")
+$registryPaths = @("HKLM:\SOFTWARE\ExpressVPN", "HKLM:\SOFTWARE\Norton\{REDACTED}")
 #removed "HKLM:\SOFTWARE\Microsoft\Windows Defender", 
 
 #Defining Product Names and Latest Versions
 $productNames  = @("ExpressVPN", "Norton Security")
 $NortonLatest = NortonLatestVersion
 $ExpressLatest = ExpressVPNLatestVersion
-$ExpressCurrent = (Invoke-Expression ".\ExpressVPN.cli --version") -match "\d+\.\d+\.\d+\.\d+"; $matches[0]
+$ExpressCurrent = Push-Location "C:\Program Files (x86)\ExpressVPN\services"; (Invoke-Expression ".\ExpressVPN.cli --version") -match "\d+\.\d+\.\d+\.\d+" ; Pop-Location
 $productLatestVersions = @($($NortonLatest), $($ExpressLatest) )
 
 # Iterate through each key and determine their properties. Ultimately determines value of secprodCheck 
@@ -161,19 +161,19 @@ foreach ($registryPath in $registryPaths) {
         if (($keyProperties.ProductName -in $productNames)) {
             
             #For ExpressVPN, can't check ver thru reg, so need do CLI cmd, hence need to check for it indiv
-            if (ExpressCurrent -eq $ExpressLatest) {
-                
+            # if ($ExpressCurrent -eq $ExpressLatest) {
+
                 if ($keyProperties.ProductVersion -in $productLatestVersions) {
                     $secprodCheck = "Pass"
                 }
 
-            }
+            # }
         }
     } else {
         $secprodCheck = "Fail"
     }
 }
 
-Write-Host "Result of Security Product Check: $($secprodCheck)" -ForegroundColor DarkYellow
+Write-Host "secprod.ps1: Result of Security Product Check: $($secprodCheck)" -ForegroundColor DarkYellow
 
 Write-Output $secprodCheck
