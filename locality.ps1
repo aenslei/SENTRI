@@ -51,6 +51,8 @@ function CheckUNSanction {
     return $result
 }
 
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~M A I N~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 # Defining main localityCheck variable
 $localityCheck = "Fail"
 
@@ -70,5 +72,6 @@ if ($sanctionCheck -eq "Pass") {
     $localityCheck = "Pass"
 }
 
-return $localityCheck
-Write-Host "Result of Locality Check: $($localityCheck)" -ForegroundColor Magenta
+Write-Host "Result of Locality Check: $($localityCheck)" -ForegroundColor DarkBlue
+
+Write-Output $localityCheck

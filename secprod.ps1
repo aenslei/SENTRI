@@ -2,10 +2,16 @@
 Author: Ainsley Cabading
 Script: secprod.ps1
 
+Author's Note: 
+- I will admit, this check script is a little wonky. It's not as dynamic as I'd like it to be,
+but I make do with the tools that I test for and the power of web scraping.
+If you want to try the tool without this script irst, simply remove the secprodCheck variable in main.ps1 > $checks.
+
+- For the Registry Path of Norton 360, I believe each user will have a different number within the { }.
+
 Function: 
 - Checks whether a client device has the necessary security products to ensure a secure connection
 to the company intranet
-
 
 Result: secprodCheck [Success/Fail]
 #>
@@ -27,9 +33,8 @@ function Find-MatchingProperty {
     }
 }
 
-##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~QueryRegistry Function~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~QueryRegistry Function~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Queries the Windows Registry path and displays it's values to see whether it exists or not
-
 function QueryRegistry {
     param (
         [string]$Path
@@ -82,28 +87,93 @@ function QueryRegistry {
     }
 }
 
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~NortonLatestVersion Function~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Queries the Norton Community blog website to extract the latest version through webscraping
+
+function NortonLatestVersion {
+    #Declares variables
+    $webRequest = Invoke-WebRequest -URI 'https://community.norton.com/en/blogs/product-update-announcements/?f%5B0%5D=im_field_content_labels%3A7243&f%5B1%5D=im_field_content_labels%3A14101'
+    $parse = $webRequest.ParsedHtml.getElementsByTagName("h3")
+    $count = 0
+    $pattern = 'Norton Security (\d+\.\d+\.\d+\.\d+) for Windows is now available!'
+    $latestVersion = @()
+
+    # Iterates through each string from the parsed HTML response and looks for the 1st instance of <h3>
+    foreach ($string in $parse){
+        if ($string.innerHTML -match $pattern){
+            $count += 1
+            $latestVersion += $string.innerHTML
+        }
+        if ($count -eq 1){
+            # Uses regex to capture the version number X.X.X.X from inside the <h3>
+            $matches = [regex]::Matches($string.innerHTML, $pattern)
+            $latestVersion = $matches[0].Groups[1].Value
+            return $latestVersion
+            break
+        }
+    }
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ExpressVPNLatestVersion Function~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Queries the Norton Community blog website to extract the latest version through webscraping
+
+function ExpressVPNLatestVersion {
+    #Declares variables
+    $htmlContent = ConvertFrom-HTML -URL "https://www.expressvpn.com/support/vpn-setup/release-notes/windows-app/" -Engine AngleSharp
+    $regexPattern = '<strong>(.*?)</strong>'
+
+    # Iterates through HTML response and looks for 1st instance of <strong>, then takes inner value
+    if ($htmlContent.InnerHtml -match $regexPattern) {
+        # Output the content inside the first <strong> tag
+        $strongContent = $matches[1]
+        return $strongContent
+    } else {
+        Write-Output "No <strong> tag found."
+    }
+    
+}
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~M A I N~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 # Defining secprodCheck value
 $secprodCheck = "Fail"
 
-# Defining array of registry paths to check
-$registryPaths = @("HKLM:\SOFTWARE\Microsoft\Windows Defender", "HKLM:\SOFTWARE\ExpressVPN", "HKLM:\SOFTWARE\Norton\{XXXXX-XXXXX-XXXXX-XXXX-XXX}")
-    # Will take off Windows Defender till I find a registry key that has Name and Version
-    # "Windows Defender" = @(
-    #     "HKLM:\SOFTWARE\Microsoft\Windows Defender"
+# Defining array of versions to check
+$registryPaths = @("HKLM:\SOFTWARE\ExpressVPN", "HKLM:\SOFTWARE\Norton\{REDACTED-REDACTED-REDACTED-REDACTED-REDACTED}")
+#removed "HKLM:\SOFTWARE\Microsoft\Windows Defender", 
 
-# Iterate through each key and determine their value. Ultimately determines value of secprodCheck 
+#Defining Product Names and Latest Versions
+$productNames  = @("ExpressVPN", "Norton Security")
+$NortonLatest = NortonLatestVersion
+$ExpressLatest = ExpressVPNLatestVersion
+$ExpressCurrent = (Invoke-Expression ".\ExpressVPN.cli --version") -match "\d+\.\d+\.\d+\.\d+"; $matches[0]
+$productLatestVersions = @($($NortonLatest), $($ExpressLatest) )
+
+# Iterate through each key and determine their properties. Ultimately determines value of secprodCheck 
 foreach ($registryPath in $registryPaths) {
+    # Queries registry for key values
     $pathQueryResponse = QueryRegistry -path $registryPath
-    #if any key is null, secprodCheck sticks to Fail value
-    if ($pathQueryResponse.queryResult -eq "Exists") {
-        # For now, skip checking latest version using keyProperties.ProductVersion
-        # $keyProperties = $pathQueryResponse.keyProperties
 
-        $secprodCheck = "Pass"
-        
+    if ($pathQueryResponse.queryResult -eq "Exists") {
+        #Extracts key properties from the query response
+        $keyProperties = $pathQueryResponse.keyProperties
+
+        if (($keyProperties.ProductName -in $productNames)) {
+            
+            #For ExpressVPN, can't check ver thru reg, so need do CLI cmd, hence need to check for it indiv
+            if (ExpressCurrent -eq $ExpressLatest) {
+                
+                if ($keyProperties.ProductVersion -in $productLatestVersions) {
+                    $secprodCheck = "Pass"
+                }
+
+            }
+        }
     } else {
         $secprodCheck = "Fail"
     }
 }
 
-Write-Host "Result of Security Product Check: $($secprodCheck)" -ForegroundColor Magenta
+Write-Host "Result of Security Product Check: $($secprodCheck)" -ForegroundColor DarkYellow
+
+Write-Output $secprodCheck
