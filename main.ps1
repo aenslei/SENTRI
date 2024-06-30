@@ -12,12 +12,13 @@ Result: connectToIntranet [Pass/Fail]
 
 $welcome = @"
 main.ps1: Running...
-        .__                                     __  ._.
-__  _  _|__| ____   ____________   ____   _____/  |_| |
-\ \/ \/ /  |/    \ /  ___/\____ \_/ __ \_/ ___\   __\ |
- \     /|  |   |  \\___ \ |  |_> >  ___/\  \___|  |  \|
-  \/\_/ |__|___|  /____  >|   __/ \___  >\___  >__|  __
-                \/     \/ |__|        \/     \/      \/
+
+  ____________________ ____________________________.___ 
+ /   _____/\_   _____/ \      \__    ___/\______   \   |
+ \_____  \  |    __)_  /   |   \|    |    |       _/   |
+ /        \ |        \/    |    \    |    |    |   \   |
+/_______  //_______  /\____|__  /____|    |____|_  /___|
+        \/         \/         \/                 \/     
 
 "@
 
@@ -29,7 +30,7 @@ _________                                     __  .__                ___________
 \     \___(  <_> )   |  \   |  \  ___/\  \___|  | |  (  <_> )   |  \  |        \\___ \  |  |  / __ \| \_\ \  |_|  |\___ \|   Y  \  ___// /_/ | 
  \______  /\____/|___|  /___|  /\___  >\___  >__| |__|\____/|___|  / /_______  /____  > |__| (____  /___  /____/__/____  >___|  /\___  >____ | 
         \/            \/     \/     \/     \/                    \/          \/     \/            \/    \/             \/     \/     \/     \/ 
-main.ps1: Connection Established. Welcome to the Intranet, User.
+main.ps1: Connection Established. Welcome to the Internal Network, User.
 
 "@
 
@@ -47,9 +48,9 @@ main.ps1: Connection Failed. Please revise your device's security and try again.
 
 Write-Host $welcome -ForegroundColor DarkBlue
 
-$osCheck = & "winspect\os.ps1"
-$localityCheck = & "winspect\locality.ps1"
-$secprodCheck = & "winspect\secprod.ps1"
+$osCheck = & "os.ps1"
+$localityCheck = & "locality.ps1"
+$secprodCheck = & "secprod.ps1"
 
 $checks = @($osCheck, $localityCheck) # $secprodCheck
 
