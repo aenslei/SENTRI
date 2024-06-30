@@ -1,5 +1,5 @@
-# winspect: A Windows Security Posture Inspector Tool
-Developing a simple tool to check a workplace device's security posture according to a set of security rules to determine whether it should be allowed to enter a company's intranet.
+# SENTRI: Securing Entry to Network Through Regulation and Inspection
+Developing a tool to check a workplace device's security posture according to a set of security rules to determine whether it should be allowed to enter a company's intranet.
 Will be made using Powershell and references Windows Registry keys and information from publicly available APIs.
 
 Tool will go through 3 different types of checks to determine whether it is secure enough to enter an intranet:
@@ -11,7 +11,7 @@ Tool will go through 3 different types of checks to determine whether it is secu
 - Checks if a device has any AV, Firewall and VPN products by checking the existence of certain Windows Registry keys.
 --> For the simplicity of this tool, I will be focusing on checking for 3 commercial products: Windows Defender, Norton Security and ExpressVPN.
 
-**2**: Operating System
-- Checks if a device has the latest Windows patch.
+**3**: Operating System
+- Checks if a device has the latest Windows patch by extracting the client's current Windows Build Version.
 
 *This project was made for my GovTech Singapore Girls in Tech Mentorship Program!*
