@@ -1,5 +1,5 @@
 # SENTRI: Securing Entry to Network Through Review and Inspection
-A tool to check a workplace client's security posture according to a set security posture baseline to determine whether it should be allowed to enter a company's internal network.
+A Network Access Control [NAC] tool to check a workplace client's security posture according to a set security posture baseline to determine whether it should be allowed to enter a company's internal network.
 Developed using only Powershell and utilises the Windows Registry and information from publicly available APIs and websites.
 
 SENTRI will go through 3 different types of checks to determine whether its client is secure enough to enter an internal network:
